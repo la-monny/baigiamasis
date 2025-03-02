@@ -10,6 +10,15 @@ function RegisterForm() {
   });
 
   const [message, setMessage] = useState("");
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let h = 8; h < 19; h++) {
+      // Darbo laikas nuo 08:00 iki 20:00
+      times.push(`${String(h).padStart(2, "0")}:00`);
+      times.push(`${String(h).padStart(2, "0")}:30`);
+    }
+    return times;
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,6 +27,14 @@ function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
+    const phoneRegex = /^\+370\d{8}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      setMessage(
+        "Įveskite teisingą lietuvišką telefono numerį (pvz., +37060000000)"
+      );
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:5000/register", {
@@ -53,7 +70,7 @@ function RegisterForm() {
         <input
           type="tel"
           name="phone"
-          placeholder="Telefonas"
+          placeholder="Tel. nr. +370..."
           value={formData.phone}
           onChange={handleChange}
           required
@@ -73,13 +90,19 @@ function RegisterForm() {
           onChange={handleChange}
           required
         />
-        <input
-          type="time"
+        <select
           name="time"
           value={formData.time}
           onChange={handleChange}
           required
-        />
+        >
+          {generateTimeOptions().map((time) => (
+            <option key={time} value={time}>
+              {time}
+            </option>
+          ))}
+        </select>
+
         <button type="submit">Registruotis</button>
       </form>
       {message && <p>{message}</p>}
