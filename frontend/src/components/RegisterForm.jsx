@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -10,10 +10,19 @@ function RegisterForm() {
   });
 
   const [message, setMessage] = useState("");
+  const [masters, setMasters] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/masters")
+      .then((res) => res.json())
+      .then((data) => setMasters(data))
+      .catch((err) => console.error("Nepavyko gauti meistrų:", err));
+  }, []);
+
   const generateTimeOptions = () => {
     const times = [];
     for (let h = 8; h < 19; h++) {
-      // Darbo laikas nuo 08:00 iki 20:00
+      // Darbo laikas nuo 08:00 iki 19:00
       times.push(`${String(h).padStart(2, "0")}:00`);
       times.push(`${String(h).padStart(2, "0")}:30`);
     }
@@ -75,14 +84,22 @@ function RegisterForm() {
           onChange={handleChange}
           required
         />
-        <input
-          type="text"
+        <select
           name="master"
-          placeholder="Meistro vardas"
           value={formData.master}
           onChange={handleChange}
           required
-        />
+        >
+          <option value="">Pasirinkite meistrą</option>
+          {masters.map((master) => (
+            <option
+              key={master._id}
+              value={`${master.specialty} ${master.name}`}
+            >
+              {master.specialty} {master.name}
+            </option>
+          ))}
+        </select>
         <input
           type="date"
           name="date"
