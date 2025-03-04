@@ -27,6 +27,17 @@ app.post("/register", async (req, res) => {
     if (!name || !phone || !master || !date || !time) {
       return res.status(400).json({ error: "Visi laukai privalomi" });
     }
+
+    // validacija, ar nėra užimtas laikas
+    const existingAppointment = await db
+      .collection("appointments")
+      .findOne({ master, date, time });
+    if (existingAppointment) {
+      return res
+        .status(400)
+        .json({ error: "Šis laikas jau užimtas! Pasirinkite kitą" });
+    }
+
     const newAppointment = { name, phone, master, date, time };
     const result = await db
       .collection("appointments")
