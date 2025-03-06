@@ -1,0 +1,47 @@
+.landing-container {
+  text-align: center;
+}
+
+header {
+  background: #f8d3c5;
+  padding: 50px 20px;
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #667b68;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.services,
+.masters {
+  margin: 50px auto;
+  max-width: 900px;
+}
+
+.service-list,
+.master-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.service,
+.master {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.service img,
+.master img {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+}

@@ -1,0 +1,22 @@
+.form-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #a3b899;
+  border-radius: 10px;
+  background: #fceee9;
+}
+
+button {
+  padding: 10px;
+  background: #667b68;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+button:hover {
+  background: #a3b899;
+}
