@@ -15,13 +15,32 @@ function AppointmentsManagement() {
   }, []);
 
   const fetchAppointments = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("JWT klaida: Tokenas nerastas!");
+      return;
+    }
+
     try {
-      const res = await fetch("http://localhost:5000/appointments");
+      const res = await fetch("http://localhost:5000/appointments", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP klaida: ${res.status}`);
+      }
+
       const data = await res.json();
       setAppointments(data);
       setFilteredAppointments(data);
     } catch (error) {
-      setMessage("Nepavyko gauti registracijų");
+      console.error("Nepavyko gauti registracijų:", error);
+      setAppointments([]);
+      setFilteredAppointments([]);
     }
   };
 
@@ -29,9 +48,16 @@ function AppointmentsManagement() {
     try {
       const res = await fetch("http://localhost:5000/masters");
       const data = await res.json();
-      setMasters(data);
+
+      if (Array.isArray(data)) {
+        setMasters(data);
+      } else {
+        console.error("Klaida: `masters` API grąžino ne masyvą!", data);
+        setMasters([]);
+      }
     } catch (error) {
-      setMessage("Nepavyko gauti meistrų");
+      console.error("Nepavyko gauti meistrų:", error);
+      setMasters([]);
     }
   };
 
@@ -47,21 +73,30 @@ function AppointmentsManagement() {
   };
 
   const deleteAppointment = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("JWT klaida: Tokenas nerastas!");
+      return;
+    }
+
     if (!window.confirm("Ar tikrai norite atšaukti šią registraciją?")) return;
 
     try {
       const res = await fetch(`http://localhost:5000/appointments/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (res.ok) {
         setMessage("✅ Registracija atšaukta");
         fetchAppointments();
       } else {
-        setMessage("Klaida trinant registraciją");
+        throw new Error(`HTTP klaida: ${res.status}`);
       }
     } catch (error) {
-      setMessage("Serverio klaida");
+      console.error("Nepavyko atšaukti registracijos:", error);
     }
   };
 
