@@ -20,6 +20,38 @@ MongoClient.connect(MONGO_URL)
   })
   .catch((err) => console.error("DB klaida:", err));
 
+// ADMIN LOGIN – JWT generavimas
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  // nekuriu DB, o naudoju hardcodintą admin'ą
+  const ADMIN = { username: "admin", password: "admin" };
+
+  if (username === ADMIN.username && password === ADMIN.password) {
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "2h" });
+    res.json({ token });
+  } else {
+    res
+      .status(401)
+      .json({ error: "Neteisingas vartotojo vardas arba slaptažodis" });
+  }
+});
+
+// JWT Middleware
+const verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token) return res.status(403).json({ error: "Prieiga draudžiama" });
+
+  jwt.verify(token.split(" ")[1], JWT_SECRET, (err, decoded) => {
+    if (err)
+      return res
+        .status(401)
+        .json({ error: "Neteisingas arba pasibaigęs tokenas" });
+    req.user = decoded;
+    next();
+  });
+};
+
 // Klientų registracija pas meistrą
 app.post("/register", async (req, res) => {
   try {
@@ -51,7 +83,7 @@ app.post("/register", async (req, res) => {
 });
 
 // Adminas mato visas registracijas
-app.get("/appointments", async (req, res) => {
+app.get("/appointments", verifyToken, async (req, res) => {
   try {
     const appointments = await db.collection("appointments").find().toArray();
     res.json(appointments);
@@ -61,7 +93,7 @@ app.get("/appointments", async (req, res) => {
 });
 
 // Adminas gali atšaukti registraciją
-app.delete("/appointments/:id", async (req, res) => {
+app.delete("/appointments/:id", verifyToken, async (req, res) => {
   try {
     const id = req.params.id;
     await db.collection("appointments").deleteOne({ _id: new ObjectId(id) });
@@ -72,7 +104,7 @@ app.delete("/appointments/:id", async (req, res) => {
 });
 
 // Adminas gali keisti registracijos duomenis
-app.patch("/appointments/:id", async (req, res) => {
+app.patch("/appointments/:id", verifyToken, async (req, res) => {
   try {
     const id = req.params.id;
 
