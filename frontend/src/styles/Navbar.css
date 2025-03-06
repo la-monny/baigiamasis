@@ -31,9 +31,11 @@
 }
 
 .active {
-  color: black;
-  text-decoration: underline;
-  font-weight: bold;
+  background: #b8d0ad;
+}
+
+a.active {
+  color: #667b68;
 }
 
 .burger {
