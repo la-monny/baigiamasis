@@ -1,29 +1,200 @@
-.admin-container {
-  max-width: 700px;
-  margin: auto;
-  padding: 20px;
-  background: #fceee9;
-  border-radius: 10px;
+.appointments-section {
+  margin-bottom: 40px;
+  background-color: #fceee9;
+  padding: 15px;
+  border-radius: 8px;
 }
 
-table {
+.select-container {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.select-container select,
+.select-container input {
+  flex: 1;
+  min-width: 150px;
+  padding: 12px;
+  border: 1px solid #dde6d5;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.filter-button {
+  display: block;
+  padding: 12px;
+  background: #667b68;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+  width: 40%;
+  margin: 0 auto;
+}
+
+.filter-container button:hover {
+  background: #a3b899;
+}
+
+.appointment-table {
   width: 100%;
   border-collapse: collapse;
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.appointment-table th,
+.appointment-table td {
+  border: none;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.appointment-table th {
+  background: #667b68;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.appointment-table tr:nth-child(even) {
   background: #dde6d5;
 }
 
-th,
-td {
-  border: 1px solid #a3b899;
-  padding: 5px;
-  text-align: center;
+.appointment-table tr:nth-child(odd) {
+  background: #f4f8f1;
 }
 
-th {
+.appointment-table tr:hover {
+  background: #e7ede2;
+}
+
+.appointment-table button {
+  flex: 1;
+  background: #a5c7a9;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  width: auto;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.appointment-table button:hover {
   background: #a3b899;
-  color: black;
 }
 
-td {
-  color: black;
+.appointments-message {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #dde6d5;
+  color: #667b68;
+}
+
+.button-container {
+  display: flex;
+  gap: 5px;
+}
+
+.no-appointments {
+  text-align: center;
+  padding: 20px;
+  background-color: #f4f8f1;
+  border-radius: 8px;
+  color: #667b68;
+  font-style: italic;
+}
+
+/* Įvesties laukai redagavimo režime */
+@media (min-width: 769px) {
+  .editing td {
+    padding: 5px;
+  }
+
+  .editing td input {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+    margin: 6px 0;
+    border: 1px solid #a3b899;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-container {
+    flex-direction: column;
+  }
+
+  .filter-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .appointment-table {
+    border: 0;
+    box-shadow: none;
+  }
+
+  .appointment-table thead {
+    display: none;
+  }
+
+  .appointment-table tr {
+    display: block;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .appointment-table td {
+    display: block;
+    text-align: right;
+    font-size: 14px;
+    position: relative;
+    padding-left: 50%;
+    border-bottom: 1px solid #dde6d5;
+  }
+
+  .appointment-table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 12px;
+    width: 45%;
+    padding-right: 10px;
+    text-align: left;
+    font-weight: bold;
+    color: #667b68;
+  }
+
+  .appointment-table td:last-child {
+    border-bottom: 0;
+    padding-left: 15px;
+    text-align: center;
+  }
+
+  .button-container {
+    justify-content: center;
+  }
+
+  .appointment-table td input {
+    padding: 4px;
+    font-size: 14px;
+  }
+  .editing td input {
+    margin: 0;
+  }
 }

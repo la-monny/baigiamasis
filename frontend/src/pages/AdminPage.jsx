@@ -6,6 +6,7 @@ import "../styles/AdminPage.css";
 
 function AdminPage() {
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,20 +16,39 @@ function AdminPage() {
     }
   }, [navigate]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setMessage("Sėkmingai atsijungėte");
+    setMessageType("success");
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
+  };
+
   return (
-    <div className="admin-container">
-      <h2>Administratoriaus valdymas</h2>
-      {message && <p>{message}</p>}
-      <AppointmentsManagement />
-      <MasterManagement />
-      <button
-        onClick={() => {
-          localStorage.removeItem("token");
-          navigate("/login");
-        }}
-      >
-        Atsijungti
-      </button>
+    <div className="container">
+      <div className="admin-container">
+        <h1>Administratoriaus valdymas</h1>
+        {message && (
+          <div
+            className={`message ${
+              messageType === "success" ? "success" : "error"
+            }`}
+          >
+            {message}
+          </div>
+        )}
+
+        <AppointmentsManagement />
+
+        <MasterManagement />
+
+        <div className="logout-section">
+          <button onClick={handleLogout} className="secondary">
+            Atsijungti
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

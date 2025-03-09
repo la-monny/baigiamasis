@@ -8,6 +8,8 @@ function AppointmentsManagement() {
   const [selectedMaster, setSelectedMaster] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [message, setMessage] = useState("");
+  const [editingAppointment, setEditingAppointment] = useState(null);
+  const [editData, setEditData] = useState({});
 
   useEffect(() => {
     fetchAppointments();
@@ -100,36 +102,77 @@ function AppointmentsManagement() {
     }
   };
 
+  const startEditing = (appointment) => {
+    setEditingAppointment(appointment._id);
+    setEditData(appointment);
+  };
+
+  const cancelEditing = () => {
+    setEditingAppointment(null);
+    setEditData({});
+  };
+
+  const handleEditChange = (e) => {
+    setEditData({ ...editData, [e.target.name]: e.target.value });
+  };
+
+  const saveEdit = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/appointments/${editingAppointment}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editData),
+        }
+      );
+
+      if (res.ok) {
+        setMessage("✅ Registracija atnaujinta");
+        fetchAppointments();
+        cancelEditing();
+      } else {
+        setMessage("Klaida atnaujinant registraciją");
+      }
+    } catch (error) {
+      setMessage("Serverio klaida");
+    }
+  };
+
   return (
-    <div className="admin-container">
+    <div className="appointments-section">
       <h2>Registracijų valdymas</h2>
-      {message && <p>{message}</p>}
+      {message && <div className="appointments-message">{message}</div>}
 
       {/* Filtrai */}
-      <div>
-        <select
-          onChange={(e) => setSelectedMaster(e.target.value)}
-          value={selectedMaster}
-        >
-          <option value="">Pasirinkite meistrą</option>
-          {masters.map((master) => (
-            <option
-              key={master._id}
-              value={`${master.specialty} ${master.name}`}
-            >
-              {master.specialty} {master.name}
-            </option>
-          ))}
-        </select>
-        <input
-          type="date"
-          onChange={(e) => setSelectedDate(e.target.value)}
-          value={selectedDate}
-        />
-        <button onClick={filterAppointments}>Filtruoti</button>
+      <div className="filter-container">
+        <div className="select-container">
+          <select
+            onChange={(e) => setSelectedMaster(e.target.value)}
+            value={selectedMaster}
+          >
+            <option value="">Pasirinkite meistrą</option>
+            {masters.map((master) => (
+              <option
+                key={master._id}
+                value={`${master.specialty} ${master.name}`}
+              >
+                {master.specialty} {master.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="date"
+            onChange={(e) => setSelectedDate(e.target.value)}
+            value={selectedDate}
+          />
+        </div>
+        <button className="filter-button" onClick={filterAppointments}>
+          Filtruoti
+        </button>
       </div>
 
-      <table>
+      <table className="appointment-table">
         <thead>
           <tr>
             <th>Vardas</th>
@@ -143,22 +186,83 @@ function AppointmentsManagement() {
         <tbody>
           {filteredAppointments.length > 0 ? (
             filteredAppointments.map((apt) => (
-              <tr key={apt._id}>
-                <td>{apt.name}</td>
-                <td>{apt.phone}</td>
-                <td>{apt.master}</td>
-                <td>{apt.date}</td>
-                <td>{apt.time}</td>
-                <td>
-                  <button onClick={() => deleteAppointment(apt._id)}>
-                    ❌ Atšaukti
-                  </button>
-                </td>
+              <tr
+                key={apt._id}
+                className={editingAppointment === apt._id ? "editing" : ""}
+              >
+                {editingAppointment === apt._id ? (
+                  <>
+                    <td data-label="Vardas">
+                      <input
+                        type="text"
+                        name="name"
+                        value={editData.name}
+                        onChange={handleEditChange}
+                      />
+                    </td>
+                    <td data-label="Telefonas">
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={editData.phone}
+                        onChange={handleEditChange}
+                      />
+                    </td>
+                    <td data-label="Meistras">
+                      <input
+                        type="text"
+                        name="master"
+                        value={editData.master}
+                        onChange={handleEditChange}
+                      />
+                    </td>
+                    <td data-label="Data">
+                      <input
+                        type="date"
+                        name="date"
+                        value={editData.date}
+                        onChange={handleEditChange}
+                      />
+                    </td>
+                    <td data-label="Laikas">
+                      <input
+                        type="time"
+                        name="time"
+                        value={editData.time}
+                        onChange={handleEditChange}
+                      />
+                    </td>
+                    <td>
+                      <div className="button-container">
+                        <button onClick={saveEdit}>💾 </button>
+                        <button onClick={cancelEditing}>❌ </button>
+                      </div>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td data-label="Vardas">{apt.name}</td>
+                    <td data-label="Telefonas">{apt.phone}</td>
+                    <td data-label="Meistras">{apt.master}</td>
+                    <td data-label="Data">{apt.date}</td>
+                    <td data-label="Laikas">{apt.time}</td>
+                    <td>
+                      <div className="button-container">
+                        <button onClick={() => startEditing(apt)}>✏️</button>
+                        <button onClick={() => deleteAppointment(apt._id)}>
+                          ❌
+                        </button>
+                      </div>
+                    </td>
+                  </>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="6">Nėra registracijų</td>
+              <td colSpan="6" className="no-appointments">
+                Nėra registracijų
+              </td>
             </tr>
           )}
         </tbody>
