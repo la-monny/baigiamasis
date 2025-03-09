@@ -1,9 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "../styles/Navbar.css";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    };
+
+    checkLoginStatus();
+    // Periodiškai tikrinti, ar vartotojas prisijungęs
+    const interval = setInterval(checkLoginStatus, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
 
   return (
     <nav className="navbar">
@@ -12,24 +30,34 @@ function Navbar() {
         <NavLink
           to="/"
           className={({ isActive }) => (isActive ? "active" : "")}
-          onClick={() => setMenuOpen(false)}
+          onClick={closeMenu}
         >
-          Apie mus
+          Pradžia
         </NavLink>
         <NavLink
           to="/register"
           className={({ isActive }) => (isActive ? "active" : "")}
-          onClick={() => setMenuOpen(false)}
+          onClick={closeMenu}
         >
           Registracija
         </NavLink>
-        <NavLink
-          to="/login"
-          className={({ isActive }) => (isActive ? "active" : "")}
-          onClick={() => setMenuOpen(false)}
-        >
-          Administravimas
-        </NavLink>
+        {isLoggedIn ? (
+          <NavLink
+            to="/admin"
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={closeMenu}
+          >
+            Administravimas
+          </NavLink>
+        ) : (
+          <NavLink
+            to="/login"
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={closeMenu}
+          >
+            Prisijungimas
+          </NavLink>
+        )}
       </div>
       <div className="burger" onClick={() => setMenuOpen(!menuOpen)}>
         ☰
