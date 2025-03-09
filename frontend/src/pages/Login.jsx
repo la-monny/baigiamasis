@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
 
 function Login() {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,7 +38,8 @@ function Login() {
   return (
     <div className="login-container">
       <h2>Prisijungimas</h2>
-      <form onSubmit={handleSubmit}>
+
+      <form onSubmit={handleSubmit} className="login-form">
         <input
           type="text"
           name="username"
@@ -45,6 +48,7 @@ function Login() {
           onChange={handleChange}
           required
         />
+
         <input
           type="password"
           name="password"
@@ -53,9 +57,13 @@ function Login() {
           onChange={handleChange}
           required
         />
-        <button type="submit">Prisijungti</button>
+
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Jungiamasi..." : "Prisijungti"}
+        </button>
       </form>
-      {message && <p>{message}</p>}
+
+      {message && <div className="message error-message">{message}</div>}
     </div>
   );
 }

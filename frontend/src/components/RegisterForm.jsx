@@ -65,65 +65,111 @@ function RegisterForm() {
     }
   };
 
-  return (
-    <div>
-      <h2>Registracija pas meistrą</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Vardas"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Tel. nr. +370..."
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
-        <select
-          name="master"
-          value={formData.master}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Pasirinkite meistrą</option>
-          {masters.map((master) => (
-            <option
-              key={master._id}
-              value={`${master.specialty} ${master.name}`}
-            >
-              {master.specialty} {master.name}
-            </option>
-          ))}
-        </select>
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          required
-        />
-        <select
-          name="time"
-          value={formData.time}
-          onChange={handleChange}
-          required
-        >
-          {generateTimeOptions().map((time) => (
-            <option key={time} value={time}>
-              {time}
-            </option>
-          ))}
-        </select>
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  };
 
-        <button type="submit">Registruotis</button>
+  return (
+    <div className="register-container">
+      <h2>Registracija pas meistrą</h2>
+
+      <form onSubmit={handleSubmit} className="register-form">
+        <div className="form-group">
+          <label htmlFor="name">Jūsų vardas</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            placeholder="Įveskite savo vardą"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="phone">Telefono numeris</label>
+          <input
+            id="phone"
+            type="tel"
+            name="phone"
+            placeholder="+3706..."
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="master">Pasirinkite meistrą</label>
+          <select
+            id="master"
+            name="master"
+            value={formData.master}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Pasirinkite --</option>
+            {masters.map((master) => (
+              <option
+                key={master._id}
+                value={`${master.specialty} ${master.name}`}
+              >
+                {master.specialty} {master.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="time-date-container">
+          <div className="form-group">
+            <label htmlFor="date">Pasirinkite datą</label>
+            <input
+              id="date"
+              type="date"
+              name="date"
+              value={formData.date}
+              min={getTomorrowDate()}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="time">Pasirinkite laiką</label>
+            <select
+              id="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+              required
+            >
+              <option value="">-- Pasirinkite --</option>
+              {generateTimeOptions().map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" className="register-btn">
+          Registruotis
+        </button>
       </form>
-      {message && <p>{message}</p>}
+
+      {message && (
+        <div
+          className={`message ${
+            messageType === "success" ? "success-message" : "error-message"
+          }`}
+        >
+          {message}
+        </div>
+      )}
     </div>
   );
 }

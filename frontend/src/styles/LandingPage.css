@@ -3,45 +3,144 @@
 }
 
 header {
-  background: #f8d3c5;
-  padding: 50px 20px;
+  background: linear-gradient(
+      to bottom,
+      rgba(248, 211, 197, 0.7),
+      rgba(252, 238, 233, 0.7)
+    ),
+    url("https://cdn1.treatwell.net/images/view/v2.i5059481.w720.h480.x57F4036F/")
+      center/cover no-repeat;
+  padding: 80px 20px;
+  border-bottom: 5px solid #dde6d5;
+  color: white;
+  text-align: center;
+  position: relative;
+}
+
+header h1 {
+  font-size: 3rem;
+  margin: 0;
+  color: #667b68;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+header p {
+  font-size: 24px;
+  margin: 20px 0;
+  color: #555;
+  font-weight: bold;
 }
 
 .cta-button {
   display: inline-block;
-  margin-top: 20px;
-  padding: 10px 20px;
+  margin-top: 30px;
+  padding: 14px 30px;
   background: #667b68;
   color: white;
   text-decoration: none;
   font-weight: bold;
-  border-radius: 5px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:hover {
+  background: #a3b899;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .services,
 .masters {
-  margin: 50px auto;
-  max-width: 900px;
+  margin: 80px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  color: #667b68;
+  margin-bottom: 40px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 50%;
+  height: 3px;
+  background: #a3b899;
+  margin: 10px auto 0;
 }
 
 .service-list,
 .master-list {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 40px;
+  flex-wrap: wrap;
 }
 
 .service,
 .master {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
   text-align: center;
+  width: 280px;
+  transition: all 0.3s;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.service:hover,
+.master:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
 }
 
 .service img,
 .master img {
-  width: 150px;
-  height: 150px;
-  border-radius: 10px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #dde6d5;
+  transition: all 0.3s;
+}
+
+.service:hover img,
+.master:hover img {
+  border-color: #f8d3c5;
+}
+
+.service h3,
+.master h3 {
+  color: #667b68;
+  margin: 20px 0 10px;
+  font-size: 1.4rem;
+}
+
+.service p,
+.master p {
+  color: #666;
+  line-height: 1.6;
+  height: 32px;
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 60px 20px;
+  }
+
+  header h1 {
+    font-size: 2.4rem;
+  }
+
+  .service,
+  .master {
+    width: 100%;
+    max-width: 350px;
+  }
 }
