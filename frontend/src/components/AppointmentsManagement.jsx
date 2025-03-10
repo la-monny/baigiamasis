@@ -139,6 +139,16 @@ function AppointmentsManagement() {
     }
   };
 
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let h = 8; h < 19; h++) {
+      // Darbo laikas nuo 08:00 iki 19:00
+      times.push(`${String(h).padStart(2, "0")}:00`);
+      times.push(`${String(h).padStart(2, "0")}:30`);
+    }
+    return times;
+  };
+
   return (
     <div className="appointments-section">
       <h2>Registracijų valdymas</h2>
@@ -225,12 +235,18 @@ function AppointmentsManagement() {
                       />
                     </td>
                     <td data-label="Laikas">
-                      <input
-                        type="time"
+                      <select
                         name="time"
                         value={editData.time}
                         onChange={handleEditChange}
-                      />
+                      >
+                        <option value="">-- Pasirinkite --</option>
+                        {generateTimeOptions().map((time) => (
+                          <option key={time} value={time}>
+                            {time}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td>
                       <div className="button-container">
