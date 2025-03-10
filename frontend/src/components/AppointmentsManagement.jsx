@@ -138,7 +138,7 @@ function AppointmentsManagement() {
       setMessage("Serverio klaida");
     }
   };
-
+  // pridėta kad laikas kas pusvalandį
   const generateTimeOptions = () => {
     const times = [];
     for (let h = 8; h < 19; h++) {
