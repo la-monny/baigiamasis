@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useMaster } from "./MasterContext";
 import "../styles/RegisterForm.css";
 
 function RegisterForm() {
+  const { selectedMaster } = useMaster();
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -11,6 +14,7 @@ function RegisterForm() {
   });
 
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [masters, setMasters] = useState([]);
 
   useEffect(() => {
@@ -19,6 +23,23 @@ function RegisterForm() {
       .then((data) => setMasters(data))
       .catch((err) => console.error("Nepavyko gauti meistrų:", err));
   }, []);
+
+  useEffect(() => {
+    if (selectedMaster && masters.length > 0) {
+      const foundMaster = masters.find((m) => {
+        const fullName = `${m.specialty} ${m.name}`;
+        return fullName.includes(selectedMaster);
+      });
+
+      if (foundMaster) {
+        const fullMasterName = `${foundMaster.specialty} ${foundMaster.name}`;
+        setFormData((prev) => ({
+          ...prev,
+          master: fullMasterName,
+        }));
+      }
+    }
+  }, [selectedMaster, masters]);
 
   const generateTimeOptions = () => {
     const times = [];
