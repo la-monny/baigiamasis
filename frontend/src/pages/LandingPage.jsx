@@ -16,9 +16,9 @@ function LandingPage() {
       <header>
         <h1>BeautySalon</h1>
         <p>Grožio paslaugos tavo mieste!</p>
-        <Link to="/register" className="cta-button">
+        <button onClick={() => handleMasterSelect("")} className="cta-button">
           Registruotis dabar
-        </Link>
+        </button>
       </header>
 
       <section className="services">

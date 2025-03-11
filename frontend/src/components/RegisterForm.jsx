@@ -58,12 +58,14 @@ function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setMessageType("");
 
     const phoneRegex = /^\+370\d{8}$/;
     if (!phoneRegex.test(formData.phone)) {
       setMessage(
         "Įveskite teisingą lietuvišką telefono numerį (pvz., +37060000000)"
       );
+      setMessageType("error");
       return;
     }
 
@@ -77,12 +79,15 @@ function RegisterForm() {
       const data = await response.json();
       if (response.ok) {
         setMessage("Registracija sėkminga!");
+        setMessageType("success");
         setFormData({ name: "", phone: "", master: "", date: "", time: "" });
       } else {
         setMessage("Klaida: " + (data.error || "Nepavyko užregistruoti"));
+        setMessageType("error");
       }
     } catch (error) {
       setMessage("Serverio klaida");
+      setMessageType("error");
     }
   };
 
@@ -95,6 +100,16 @@ function RegisterForm() {
   return (
     <div className="register-container">
       <h2>Registracija pas meistrą</h2>
+
+      {message && (
+        <div
+          className={`message ${
+            messageType === "success" ? "success-message" : "error-message"
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="register-form">
         <div className="form-group">
@@ -181,16 +196,6 @@ function RegisterForm() {
           Registruotis
         </button>
       </form>
-
-      {message && (
-        <div
-          className={`message ${
-            messageType === "success" ? "success-message" : "error-message"
-          }`}
-        >
-          {message}
-        </div>
-      )}
     </div>
   );
 }
