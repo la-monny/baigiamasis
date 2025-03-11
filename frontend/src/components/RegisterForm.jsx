@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useMaster } from "./MasterContext";
 import "../styles/RegisterForm.css";
 
 function RegisterForm() {
+  const { selectedMaster } = useMaster();
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -11,6 +14,7 @@ function RegisterForm() {
   });
 
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [masters, setMasters] = useState([]);
 
   useEffect(() => {
@@ -19,6 +23,23 @@ function RegisterForm() {
       .then((data) => setMasters(data))
       .catch((err) => console.error("Nepavyko gauti meistrų:", err));
   }, []);
+
+  useEffect(() => {
+    if (selectedMaster && masters.length > 0) {
+      const foundMaster = masters.find((m) => {
+        const fullName = `${m.specialty} ${m.name}`;
+        return fullName.includes(selectedMaster);
+      });
+
+      if (foundMaster) {
+        const fullMasterName = `${foundMaster.specialty} ${foundMaster.name}`;
+        setFormData((prev) => ({
+          ...prev,
+          master: fullMasterName,
+        }));
+      }
+    }
+  }, [selectedMaster, masters]);
 
   const generateTimeOptions = () => {
     const times = [];
@@ -37,12 +58,14 @@ function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setMessageType("");
 
     const phoneRegex = /^\+370\d{8}$/;
     if (!phoneRegex.test(formData.phone)) {
       setMessage(
         "Įveskite teisingą lietuvišką telefono numerį (pvz., +37060000000)"
       );
+      setMessageType("error");
       return;
     }
 
@@ -56,12 +79,15 @@ function RegisterForm() {
       const data = await response.json();
       if (response.ok) {
         setMessage("Registracija sėkminga!");
+        setMessageType("success");
         setFormData({ name: "", phone: "", master: "", date: "", time: "" });
       } else {
         setMessage("Klaida: " + (data.error || "Nepavyko užregistruoti"));
+        setMessageType("error");
       }
     } catch (error) {
       setMessage("Serverio klaida");
+      setMessageType("error");
     }
   };
 
@@ -74,6 +100,16 @@ function RegisterForm() {
   return (
     <div className="register-container">
       <h2>Registracija pas meistrą</h2>
+
+      {message && (
+        <div
+          className={`message ${
+            messageType === "success" ? "success-message" : "error-message"
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="register-form">
         <div className="form-group">
@@ -160,16 +196,6 @@ function RegisterForm() {
           Registruotis
         </button>
       </form>
-
-      {message && (
-        <div
-          className={`message ${
-            messageType === "success" ? "success-message" : "error-message"
-          }`}
-        >
-          {message}
-        </div>
-      )}
     </div>
   );
 }
