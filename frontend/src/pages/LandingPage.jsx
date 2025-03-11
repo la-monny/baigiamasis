@@ -1,10 +1,30 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import "../styles/LandingPage.css";
 import { useMaster } from "../components/MasterContext";
 
 function LandingPage() {
   const { setSelectedMaster } = useMaster();
   const navigate = useNavigate();
+  const [masters, setMasters] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchMasters();
+  }, []);
+
+  const fetchMasters = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:5000/masters");
+      const data = await response.json();
+      setMasters(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Klaida gaunant meistrus:", error);
+      setLoading(false);
+    }
+  };
 
   const handleMasterSelect = (master) => {
     setSelectedMaster(master);
@@ -61,71 +81,39 @@ function LandingPage() {
 
       <section className="masters">
         <h2 className="section-title">Mūsų meistrai</h2>
-        <div className="master-list">
-          <div className="master">
-            <img
-              src="https://media.skilldeer.com/550x450/a8a6e6f6d79b7060f3926bebea88e8c100751ed4.png"
-              alt="Kirpėja Erika"
-            />
-            <h3>Kirpėja Erika</h3>
-            <p>
-              15 metų patirtis, modernūs ir klasikiniai kirpimai bei dažymai.
-            </p>
-            <button
-              onClick={() => handleMasterSelect("Kirpėja Erika")}
-              className="cta-button"
-            >
-              Registruotis
-            </button>
+        {loading ? (
+          <p>Kraunama...</p>
+        ) : (
+          <div className="master-list">
+            {masters.length > 0 ? (
+              masters.map((master) => (
+                <div key={master._id} className="master">
+                  <img
+                    src={master.photo || "https://via.placeholder.com/180"}
+                    alt={master.name}
+                  />
+                  <h3>
+                    {master.specialty} {master.name}
+                  </h3>
+                  <p>{master.description}</p>
+                  <button
+                    onClick={() =>
+                      handleMasterSelect(master.specialty + " " + master.name)
+                    }
+                    className="cta-button"
+                  >
+                    Registruotis
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p>
+                Nėra meistrų. Prisijunkite kaip administratorius, kad
+                pridėtumėte.
+              </p>
+            )}
           </div>
-          <div className="master">
-            <img
-              src="https://katnails.com/wp-content/uploads/2022/11/315294910_466698632111730_7805813316137842941_n-1024x819.jpg"
-              alt="Nagų meistrė Inga"
-            />
-            <h3>Manikiūristė Inga</h3>
-            <p>Gelinis lakavimas, klasikinis manikiūras, nagų priauginimas.</p>
-            <button
-              onClick={() => handleMasterSelect("Manikiūristė Inga")}
-              className="cta-button"
-            >
-              Registruotis
-            </button>
-          </div>
-          <div className="master">
-            <img
-              src="https://www.amtamassage.org/globalassets/images/publications-and-research/consumer-views/massage-medical.jpg"
-              alt="Masažistas Tomas"
-            />
-            <h3>Masažuotojas Tomas</h3>
-            <p>
-              Patirtis masažo srityje ir individuali prieiga prie kiekvieno
-              kliento.
-            </p>
-            <button
-              onClick={() => handleMasterSelect("Masažuotojas Tomas")}
-              className="cta-button"
-            >
-              Registruotis
-            </button>
-          </div>
-          <div className="master">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv19s4z5ozPnkGVAzVDFtPQIal1G4oSXVcAQ&s"
-              alt="Kosmetologė Lina"
-            />
-            <h3>Kosmetologė Lina</h3>
-            <p>
-              Veido valymai bei įvairios pagal jūsų odą pritaikytos procedūros.
-            </p>
-            <button
-              onClick={() => handleMasterSelect("Kosmetologė Lina")}
-              className="cta-button"
-            >
-              Registruotis
-            </button>
-          </div>
-        </div>
+        )}
       </section>
 
       <footer>

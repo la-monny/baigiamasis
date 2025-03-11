@@ -141,11 +141,17 @@ app.patch("/appointments/:id", verifyToken, async (req, res) => {
 // Pridėti meistrą
 app.post("/masters", async (req, res) => {
   try {
-    const { name, specialty } = req.body;
-    if (!name || !specialty) {
+    const { name, specialty, description, photo } = req.body;
+    if (!name || !specialty || !description || !photo) {
       return res.status(400).json({ error: "Visi laukai privalomi" });
     }
-    const newMaster = { name, specialty };
+    const newMaster = {
+      name,
+      specialty,
+      description: description || "Nėra informacijos",
+      photo: photo || "Nėra nuotraukos", // Base64 formato nuotrauka
+    };
+
     await db.collection("masters").insertOne(newMaster);
     res.status(201).json({ message: "Meistras pridėtas" });
   } catch (error) {
