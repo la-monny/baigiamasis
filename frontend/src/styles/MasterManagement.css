@@ -94,13 +94,35 @@
   color: #667b68;
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea {
   width: 100%;
   padding: 12px;
   border: 1px solid #dde6d5;
   border-radius: 6px;
   font-size: 16px;
   box-sizing: border-box;
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.file-input {
+  padding: 10px 0;
+}
+
+.photo-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.photo-preview img {
+  max-width: 100%;
+  max-height: 100px;
+  border-radius: 8px;
+  border: 2px solid #dde6d5;
 }
 
 .message {

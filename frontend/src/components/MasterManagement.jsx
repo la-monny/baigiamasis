@@ -3,7 +3,13 @@ import "../styles/MasterManagement.css";
 
 function MasterManagement() {
   const [masters, setMasters] = useState([]);
-  const [newMaster, setNewMaster] = useState({ name: "", specialty: "" });
+  const [newMaster, setNewMaster] = useState({
+    name: "",
+    specialty: "",
+    description: "",
+    photo: "",
+  });
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
 
@@ -26,6 +32,35 @@ function MasterManagement() {
     setNewMaster({ ...newMaster, [e.target.name]: e.target.value });
   };
 
+  const handlePhotoChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      console.log(file.size);
+      // failo dydis max 1MB
+      if (file.size > 1024 * 1024) {
+        setMessage("Nuotrauka per didelė! Maksimalus dydis 1MB");
+        setMessageType("error");
+        return;
+      }
+
+      const allowedTypes = ["image/jpeg", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        setMessage("Netinkamas failo formatas! Leidžiami tik .jpg ir .jpeg");
+        setMessageType("error");
+        return;
+      }
+
+      // konvertavimas į Base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setNewMaster({ ...newMaster, photo: base64String });
+        setPhotoPreview(base64String);
+      };
+    }
+  };
+
   const addMaster = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -41,7 +76,8 @@ function MasterManagement() {
         setMessage("✅ Meistras pridėtas");
         setMessageType("success");
         fetchMasters();
-        setNewMaster({ name: "", specialty: "" });
+        setNewMaster({ name: "", specialty: "", description: "", photo: "" });
+        setPhotoPreview(null);
       } else {
         setMessage("Klaida pridedant meistrą");
         setMessageType("error");
@@ -102,6 +138,34 @@ function MasterManagement() {
             onChange={handleChange}
             required
           />
+        </div>
+        <div className="form-group">
+          <label htmlFor="description">Aprašymas</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Įveskite meistro aprašymą"
+            value={newMaster.description}
+            onChange={handleChange}
+            rows={3}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="photo">Nuotrauka (max 1MB)</label>
+          <input
+            type="file"
+            id="photo"
+            name="photo"
+            onChange={handlePhotoChange}
+            className="file-input"
+            required
+          />
+          {photoPreview && (
+            <div className="photo-preview">
+              <img src={photoPreview} alt="Peržiūra" />
+            </div>
+          )}
         </div>
         <button type="submit">Pridėti meistrą</button>
       </form>
