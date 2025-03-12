@@ -20,6 +20,7 @@ function AppointmentsManagement() {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("JWT klaida: Tokenas nerastas!");
+      setMessage("Autentifikacijos klaida");
       return;
     }
 
@@ -78,6 +79,7 @@ function AppointmentsManagement() {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("JWT klaida: Tokenas nerastas!");
+      setMessage("Autentifikacijos klaida");
       return;
     }
 
@@ -117,12 +119,22 @@ function AppointmentsManagement() {
   };
 
   const saveEdit = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("JWT klaida: Tokenas nerastas!");
+      setMessage("Autentifikacijos klaida");
+      return;
+    }
+
     try {
       const res = await fetch(
         `http://localhost:5000/appointments/${editingAppointment}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(editData),
         }
       );
@@ -135,9 +147,11 @@ function AppointmentsManagement() {
         setMessage("Klaida atnaujinant registraciją");
       }
     } catch (error) {
+      console.error("Nepavyko atnaujinti registracijos:", error);
       setMessage("Serverio klaida");
     }
   };
+
   // pridėta kad laikas kas pusvalandį
   const generateTimeOptions = () => {
     const times = [];
