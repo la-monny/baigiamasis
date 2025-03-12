@@ -65,3 +65,8 @@
   color: #6b3b2a;
   border-left: 4px solid #c25e3a;
 }
+@media (max-width: 768px) {
+  .login-container {
+    margin: 80px 20px;
+  }
+}

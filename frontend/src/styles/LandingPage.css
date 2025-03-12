@@ -140,6 +140,10 @@ header button {
     font-size: 2.4rem;
   }
 
+  header button {
+    max-width: 50%;
+  }
+
   .service,
   .master {
     width: 100%;
