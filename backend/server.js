@@ -22,34 +22,54 @@ MongoClient.connect(MONGO_URL)
 
 // ADMIN LOGIN – JWT generavimas
 app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
-  // nekuriu DB, o naudoju hardcodintą admin'ą
-  const ADMIN = { username: "admin", password: "admin" };
+    // nekuriu DB, o naudoju hardcodintą admin'ą
+    const ADMIN = { username: "admin", password: "admin" };
 
-  if (username === ADMIN.username && password === ADMIN.password) {
-    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "2h" });
-    res.json({ token });
-  } else {
-    res
-      .status(401)
-      .json({ error: "Neteisingas vartotojo vardas arba slaptažodis" });
+    if (username === ADMIN.username && password === ADMIN.password) {
+      try {
+        const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "2h" });
+        res.json({ token });
+      } catch (tokenError) {
+        console.error("JWT generavimo klaida:", tokenError);
+        res
+          .status(500)
+          .json({ error: "Nepavyko sugeneruoti prisijungimo tokeno" });
+      }
+    } else {
+      res
+        .status(401)
+        .json({ error: "Neteisingas vartotojo vardas arba slaptažodis" });
+    }
+  } catch (error) {
+    console.error("Prisijungimo klaida:", error);
+    res.status(500).json({ error: "Serverio klaida apdorojant prisijungimą" });
   }
 });
 
 // JWT Middleware
 const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"];
-  if (!token) return res.status(403).json({ error: "Prieiga draudžiama" });
+  try {
+    const token = req.headers["authorization"];
+    if (!token) return res.status(403).json({ error: "Prieiga draudžiama" });
 
-  jwt.verify(token.split(" ")[1], JWT_SECRET, (err, decoded) => {
-    if (err)
-      return res
-        .status(401)
-        .json({ error: "Neteisingas arba pasibaigęs tokenas" });
-    req.user = decoded;
-    next();
-  });
+    jwt.verify(token.split(" ")[1], JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res
+          .status(401)
+          .json({ error: "Neteisingas arba pasibaigęs tokenas" });
+      }
+      req.user = decoded;
+      next();
+    });
+  } catch (error) {
+    console.error("JWT tikrinimo klaida:", error);
+    return res
+      .status(500)
+      .json({ error: "Serverio klaida tikrinant autentifikaciją" });
+  }
 };
 
 // Klientų registracija pas meistrą
