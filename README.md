@@ -25,13 +25,15 @@ A full-stack web application for managing a beauty salon, allowing customers to 
 
 - React.js
 - React Router for navigation
-- Context API for state management
+- Vite
 - CSS for styling
 
 ### Backend
 
 - Node.js
 - Express.js
+- Cors
+- Dotenv
 - MongoDB for database
 - JWT for authentication
 
@@ -82,7 +84,11 @@ git clone https://github.com/la-monny/baigiamasis.git
 2. Install backend and frontend dependencies
 
 ```
-Install node modules in backend and react+vite to frontend
+cd backend
+npm install
+
+cd frontend
+npm install
 
 ```
 
